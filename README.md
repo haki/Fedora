@@ -3,55 +3,35 @@
 ## Update system and upgrade packages
 ```
 sudo dnf update -y
-```
-```
 sudo dnf upgrade -y
 ```
 
 ## Configure dnf.conf
 ```
 sudo sh -c 'echo "fastestmirror=True" >> /etc/dnf/dnf.conf'
-```
-```
 sudo sh -c 'echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf'
-```
-```
 sudo sh -c 'echo "deltarpm=True" >> /etc/dnf/dnf.conf'
 ```
 
 ## Enable RPM Fusion repositories
 ```
 sudo dnf install -y "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
-```
-```
 sudo dnf install -y "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
-```
-```
 sudo dnf upgrade --refresh
-```
-```
 sudo dnf groupupdate core
-```
-```
 sudo dnf install -y rpmfusion-free-release-tainted dnf-plugins-core
 ```
 
 ## Configure Flatpak repository
 ```
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-```
-```
 flatpak remote-modify --enable flathub
 ```
 
 ## Firmware Updates
 ```
 sudo fwupdmgr refresh --force
-```
-```
 sudo fwupdmgr get-updates
-```
-```
 sudo fwupdmgr update
 ```
 
@@ -73,35 +53,25 @@ sudo dnf install -y vlc steam gnome-tweaks papirus-icon-theme tlp tlp-rdw unzip 
 ## Configure Unity Hub repository
 ```
 sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com/linux/repos/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://hub.unity3d.com/linux/repos/rpm/stable/repodata/repomd.xml.key\nrepo_gpgcheck=1" > /etc/yum.repos.d/unityhub.repo'
-```
-```
 sudo dnf install -y unityhub
 ```
 
 ## Start touchpad gestures
 ```
 sudo systemctl start touchegg
-```
-```
 sudo systemctl enable touchegg
 ```
 
 ## Visual Studio
 ```
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-```
-```
 sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-```
-```
 sudo dnf install -y code
 ```
 
 ## Power management adjustments
 ```
 sudo systemctl enable tlp.service
-```
-```
 sudo systemctl mask systemd-rfkill.service systemd-rfkill.socket
 ```
 
@@ -133,25 +103,15 @@ sudo dnf install -y fira-code-fonts 'mozilla-fira*' 'google-roboto*'
 ## Multimedia codecs and software installation
 ```
 sudo dnf groupupdate sound-and-video
-```
-```
 sudo dnf install -y libdvdcss
-```
-```
 sudo dnf install -y gstreamer1-plugins-{bad-\*,good-\*,ugly-\*,base} gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel ffmpeg gstreamer-ffmpeg 
-```
-```
 sudo dnf install -y lame\* --exclude=lame-devel
-```
-```
 sudo dnf group upgrade --with-optional Multimedia
 ```
 
 ## Configuration for Cisco OpenH264
 ```
 sudo dnf config-manager --set-enabled fedora-cisco-openh264
-```
-```
 sudo dnf install -y gstreamer1-plugin-openh264 mozilla-openh264
 ```
 
@@ -170,14 +130,8 @@ flatpak install -y flathub com.github.joseexposito.touche org.mozilla.Thunderbir
 ```
 sudo dnf install -y snapd
 sudo ln -s /var/lib/snapd/snap /snap # for classic snap support
-```
-```
 sudo snap install flutter --classic
-```
-```
 sudo snap install blender --classic
-```
-```
 sudo snap install postman
 ```
 
@@ -210,18 +164,17 @@ EOF
 ```
 ```
 sudo dnf makecache
-```
-```
 sudo dnf install -y redhat-lsb-core anydesk
 ```
 
 ## Github Desktop
 ```
 sudo rpm --import https://rpm.packages.shiftkey.dev/gpg.key
-```
-```
 sudo sh -c 'echo -e "[shiftkey-packages]\nname=GitHub Desktop\nbaseurl=https://rpm.packages.shiftkey.dev/rpm/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://rpm.packages.shiftkey.dev/gpg.key" > /etc/yum.repos.d/shiftkey-packages.repo'
-```
-```
 sudo dnf install github-desktop
+```
+
+## Google Chrome
+```
+sudo dnf install google-chrome-stable
 ```
