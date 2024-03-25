@@ -1,18 +1,17 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Update system and upgrade packages
 sudo dnf update -y
 sudo dnf upgrade -y
 
 # Configure dnf.conf
-sudo sh -c 'echo "fastestmirror=True" >> /etc/dnf/dnf.conf'
-sudo sh -c 'echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf'
-sudo sh -c 'echo "deltarpm=True" >> /etc/dnf/dnf.conf'
+sudo tee -a /etc/dnf/dnf.conf <<< "fastestmirror=True"
+sudo tee -a /etc/dnf/dnf.conf <<< "max_parallel_downloads=10"
+sudo tee -a /etc/dnf/dnf.conf <<< "deltarpm=True"
 
 # Enable RPM Fusion repositories
-sudo dnf install -y "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm"
-sudo dnf install -y "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
-
+sudo dnf install -y "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-\$(rpm -E %fedora).noarch.rpm"
+sudo dnf install -y "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-\$(rpm -E %fedora).noarch.rpm"
 sudo dnf upgrade --refresh
 sudo dnf groupupdate core
 sudo dnf install -y rpmfusion-free-release-tainted dnf-plugins-core
@@ -30,16 +29,16 @@ sudo fwupdmgr update
 sudo systemctl enable fstrim.timer
 
 # Nvidia drivers installation
-modinfo -F version nvidia || echo "Nvidia drivers not installed."
 sudo dnf install -y akmod-nvidia xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-cuda-libs vdpauinfo libva-vdpau-driver libva-utils vulkan
-modinfo -F version nvidia || echo "Nvidia drivers installation failed."
 
 # Additional utilities and applications
 sudo dnf install -y vlc steam gnome-tweaks papirus-icon-theme tlp tlp-rdw unzip dotnet-sdk-8.0 mono-devel openssl openssl-libs GConf2 openssl1.1 touchegg
+
 # Configure Unity Hub repository
 sudo sh -c 'echo -e "[unityhub]\nname=Unity Hub\nbaseurl=https://hub.unity3d.com/linux/repos/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://hub.unity3d.com/linux/repos/rpm/stable/repodata/repomd.xml.key\nrepo_gpgcheck=1" > /etc/yum.repos.d/unityhub.repo'
 sudo dnf install -y unityhub
 
+# Start touchpad gestures
 sudo systemctl start touchegg
 sudo systemctl enable touchegg
 
@@ -61,7 +60,6 @@ wget https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2023.2.1.24/andr
 wget https://download.jetbrains.com/rider/JetBrains.Rider-2023.3.4.tar.gz
 sudo tar -xzf android-studio-2023.2.1.24-linux.tar.gz -C /opt
 sudo tar -xzf JetBrains.Rider-2023.3.4.tar.gz -C /opt
-# Cleanup downloaded files
 rm android-studio-2023.2.1.24-linux.tar.gz JetBrains.Rider-2023.3.4.tar.gz
 cd /
 
@@ -75,20 +73,15 @@ sudo dnf install -y gstreamer1-plugins-{bad-\*,good-\*,ugly-\*,base} gstreamer1-
 sudo dnf install -y lame\* --exclude=lame-devel
 sudo dnf group upgrade --with-optional Multimedia
 
-# Configuration for Cisco OpenH264
 sudo dnf config-manager --set-enabled fedora-cisco-openh264
 sudo dnf install -y gstreamer1-plugin-openh264 mozilla-openh264
 
-# Remove LibreOffice and install the flatpak version
 sudo dnf remove -y libreoffice*
-flatpak install -y flathub org.libreoffice.LibreOffice
-
-# Install various applications via Flatpak
 flatpak install -y flathub com.github.joseexposito.touche org.mozilla.Thunderbird md.obsidian.Obsidian org.telegram.desktop org.libreoffice.LibreOffice com.usebottles.bottles org.remmina.Remmina com.github.wwmm.easyeffects org.gimp.GIMP com.heroicgameslauncher.hgl io.github.jeffshee.Hidamari com.discordapp.Discord org.kde.kdenlive org.kde.okular org.kde.krita io.github.nate_xyz.Paleta net.lutris.Lutris org.upscayl.Upscayl com.spotify.Client
-
-# Install Snap and Snap applications
 sudo dnf install -y snapd
 sudo ln -s /var/lib/snapd/snap /snap # for classic snap support
+sudo systemctl enable --now snapd.service
+
 sudo snap install flutter --classic
 sudo snap install blender --classic
 sudo snap install postman
@@ -105,7 +98,6 @@ sudo dnf group install --with-optional virtualization
 sudo systemctl start libvirtd
 sudo systemctl enable libvirtd
 
-# Configure AnyDesk repository and install AnyDesk
 sudo tee /etc/yum.repos.d/AnyDesk-Fedora.repo <<EOF
 [anydesk]
 name=AnyDesk Fedora - stable
@@ -118,13 +110,12 @@ EOF
 sudo dnf makecache
 sudo dnf install -y redhat-lsb-core anydesk
 
-# Github
 sudo rpm --import https://rpm.packages.shiftkey.dev/gpg.key
 sudo sh -c 'echo -e "[shiftkey-packages]\nname=GitHub Desktop\nbaseurl=https://rpm.packages.shiftkey.dev/rpm/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://rpm.packages.shiftkey.dev/gpg.key" > /etc/yum.repos.d/shiftkey-packages.repo'
 sudo dnf install github-desktop
 
-sudo dnf upgrade --refresh
-sudo dnf check
-sudo dnf autoremove
+sudo dnf install google-chrome-stable
 
+echo "System will restart after 5 seconds!"
+sleep 5
 sudo reboot now
