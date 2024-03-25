@@ -8,9 +8,9 @@ sudo dnf upgrade -y
 
 ## Configure dnf.conf
 ```
-sudo sh -c 'echo "fastestmirror=True" >> /etc/dnf/dnf.conf'
-sudo sh -c 'echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf'
-sudo sh -c 'echo "deltarpm=True" >> /etc/dnf/dnf.conf'
+sudo tee -a /etc/dnf/dnf.conf <<< "fastestmirror=True"
+sudo tee -a /etc/dnf/dnf.conf <<< "max_parallel_downloads=10"
+sudo tee -a /etc/dnf/dnf.conf <<< "deltarpm=True
 ```
 
 ## Enable RPM Fusion repositories
